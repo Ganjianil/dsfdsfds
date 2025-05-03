@@ -20,9 +20,9 @@ mongoose.connection.on("disconnected", () => {
   mongoose.connect(process.env.MONGODB_URI);
 });
 
-app.listen(port, () => {
-  console.log(`port connected on ${port}`);
-});
+app.listen(port, "0.0.0.0", () => {
+    console.log(`port connected on ${port}`);
+  });
 
 app.use("/home", (req, res) => {
   res.json({ message: "welcome" });
