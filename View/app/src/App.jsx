@@ -1,10 +1,9 @@
-
-
 import { useEffect, useState } from "react";
 import { jsPDF } from "jspdf";
-import "./App.css"
-// Dynamically import react-datepicker with SSR disabled
-// Import the CSS for react-datepicker (ensure this is loaded on the client)
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
+import "./App.css";
 
 export default function Home() {
   const [invoices, setInvoices] = useState([]);
@@ -19,7 +18,7 @@ export default function Home() {
     invoiceNumber: "",
     items: [{ description: "", quantity: 1, price: 0 }],
     totalAmount: 0,
-    dateIssued: null, // Use null for Date object
+    dateIssued: null,
   });
 
   useEffect(() => {
@@ -82,7 +81,6 @@ export default function Home() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Format the dateIssued to DD-MM-YYYY before submitting
       const formattedInvoice = {
         ...invoice,
         dateIssued: invoice.dateIssued
@@ -190,100 +188,95 @@ export default function Home() {
   const downloadInvoicePDF = (invoice) => {
     const doc = new jsPDF();
 
-    // Header with Refined Colors
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
-    doc.setTextColor(33, 150, 243); // Professional blue for "DIGITAL ADS"
+    doc.setTextColor(33, 150, 243);
     doc.text("DIGITAL ADS", 20, 20);
-    doc.setTextColor(244, 81, 30); // Professional orange for "TAX INVOICE"
+    doc.setTextColor(244, 81, 30);
     doc.text("TAX INVOICE", 90, 20, { align: "center" });
-    doc.setTextColor(76, 175, 80); // Professional green for tagline
+    doc.setTextColor(76, 175, 80);
     doc.text("WEB,SEO & G-List", 190, 20, { align: "right" });
     doc.setDrawColor(33, 150, 243);
     doc.setLineWidth(0.5);
     doc.line(20, 25, 190, 25);
-    doc.setTextColor(0, 0, 0); // Reset to black
+    doc.setTextColor(0, 0, 0);
 
-    // Details Section (Two Columns) with Decreased Spacing
     let y = 40;
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(33, 150, 243); // Blue for section titles
+    doc.setTextColor(33, 150, 243);
     doc.text("CUSTOMER DETAILS", 20, y);
     doc.text("DIGI ADS DETAILS", 110, y);
-    doc.setDrawColor(76, 175, 80); // Green underline
+    doc.setDrawColor(76, 175, 80);
     doc.setLineWidth(0.2);
     doc.line(20, y + 2, 90, y + 2);
     doc.line(110, y + 2, 190, y + 2);
 
-    y += 8; // Reduced initial spacing
+    y += 8;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
 
-    // Customer Details (Left Column) - Blue labels with decreased spacing
     doc.setTextColor(33, 150, 243);
     doc.text("BILLING NAME: ", 20, y);
     doc.setTextColor(0, 0, 0);
     doc.text(`${invoice.name}`, 50, y);
 
-    y += 6; // Decreased spacing from 8 to 6
+    y += 6;
     doc.setTextColor(33, 150, 243);
     doc.text("PHONE: ", 20, y);
     doc.setTextColor(0, 0, 0);
     doc.text(`${invoice.mobile}`, 50, y);
 
-    y += 6; // Decreased spacing from 8 to 6
+    y += 6;
     doc.setTextColor(33, 150, 243);
     doc.text("PAN No: ", 20, y);
     doc.setTextColor(0, 0, 0);
     doc.text(`${invoice.pan}`, 50, y);
 
-    y += 6; // Decreased spacing from 8 to 6
+    y += 6;
     doc.setTextColor(33, 150, 243);
     doc.text("GST No: ", 20, y);
     doc.setTextColor(0, 0, 0);
     doc.text(`${invoice.gst}`, 50, y);
 
-    // Digi Ads Details (Right Column) - Green labels with decreased spacing
-    y = 48; // Adjusted to align with left column after spacing reduction
+    y = 48;
     doc.setTextColor(76, 175, 80);
     doc.text("DATE: ", 110, y);
     doc.setTextColor(0, 0, 0);
     doc.text(`${invoice.dateIssued || "null"}`, 130, y);
 
-    y += 6; // Decreased spacing from 10 to 6
+    y += 6;
     doc.setTextColor(76, 175, 80);
     doc.text("INVOICE NO: ", 110, y);
     doc.setTextColor(0, 0, 0);
     doc.text(`${invoice.invoiceNumber}`, 140, y);
 
-    y += 6; // Decreased spacing from 10 to 6
+    y += 6;
     doc.setTextColor(76, 175, 80);
     doc.text("Digi ads BILLING ADDRESS: ", 110, y);
     doc.setTextColor(0, 0, 0);
     doc.text("2nd Floor Tarnaka", 160, y);
 
-    y += 6; // Decreased spacing from 10 to 6
+    y += 6;
     doc.setTextColor(76, 175, 80);
     doc.text("", 110, y);
     doc.setTextColor(0, 0, 0);
     doc.text("Near Metro park, Hyderabad, Telangana-500036", 110, y);
 
-    y += 6; // Decreased spacing from 10 to 6
+    y += 6;
     doc.setTextColor(76, 175, 80);
     doc.text("SAC CODE: ", 110, y);
     doc.setTextColor(0, 0, 0);
     doc.text("998365", 130, y);
 
-    y += 6; // Decreased spacing from 10 to 6
+    y += 6;
     doc.setTextColor(76, 175, 80);
     doc.text("REVERSE CHARGE: ", 110, y);
     doc.setTextColor(0, 0, 0);
     doc.text("No", 160, y);
 
-    // Payment Table with Decreased Spacing
-    y += 20; // Reduced space before payment table from 30 to 20
+    y += 20;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.setTextColor(33, 150, 243);
@@ -291,10 +284,10 @@ export default function Home() {
     doc.setDrawColor(33, 150, 243);
     doc.line(20, y + 2, 190, y + 2);
 
-    y += 10; // Reduced from 12 to 10
+    y += 10;
     doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
-    doc.setFillColor(200, 230, 255); // Softer light blue background
+    doc.setFillColor(200, 230, 255);
     doc.rect(20, y - 4, 170, 8, "F");
     doc.setTextColor(0, 0, 0);
     doc.text("Category Count", 20, y);
@@ -303,16 +296,15 @@ export default function Home() {
     doc.setDrawColor(76, 175, 80);
     doc.line(20, y + 2, 190, y + 2);
 
-    // Calculate totals with explicit GST 18%
     let netAmount = 0;
     invoice.items.forEach((item) => {
       netAmount += item.quantity * item.price;
     });
-    const gstRate = 0.18; // Explicitly define GST rate as 18%
-    const gst = netAmount * gstRate; // Calculate GST (18%)
-    const totalAmount = netAmount + gst; // Total after adding GST
+    const gstRate = 0.18;
+    const gst = netAmount * gstRate;
+    const totalAmount = netAmount + gst;
 
-    y += 8; // Reduced from 10 to 8
+    y += 8;
     doc.setFont("helvetica", "normal");
     doc.setTextColor(0, 0, 0);
     doc.text(
@@ -325,57 +317,55 @@ export default function Home() {
     doc.text("Gross Product Amount", 70, y);
     doc.text(`${netAmount.toFixed(2)}`, 150, y, { align: "right" });
 
-    y += 5; // Decreased spacing from 8 to 5
+    y += 5;
     doc.text("", 20, y);
     doc.text("Net Amount", 70, y);
     doc.text(`${netAmount.toFixed(2)}`, 150, y, { align: "right" });
 
-    // List items with decreased spacing
     invoice.items.forEach((item, index) => {
-      y += 5; // Decreased spacing from 8 to 5
+      y += 5;
       doc.text(`Product ${index + 1}`, 20, y);
       doc.text(`${item.description}`, 70, y);
-      doc.text(`Qty: ${item.quantity}, Price: ₹${item.price}`, 100, y); // Adjusted nested spacing
+      doc.text(`Qty: ${item.quantity}, Price: ₹${item.price}`, 100, y);
       doc.text("", 150, y, { align: "right" });
     });
 
-    y += 10; // Reduced from 15 to 10
+    y += 10;
     doc.text("", 20, y);
-    doc.text("GST (18%)", 70, y); // Renamed from IGST to GST for clarity
+    doc.text("GST (18%)", 70, y);
     doc.setTextColor(244, 81, 30);
     doc.text(`${gst.toFixed(2)}`, 150, y, { align: "right" });
     doc.setTextColor(0, 0, 0);
 
-    y += 5; // Decreased spacing from 8 to 5
+    y += 5;
     doc.text("", 20, y);
     doc.text("TOTAL GST (18%)", 70, y);
     doc.setTextColor(244, 81, 30);
     doc.text(`${gst.toFixed(2)}`, 150, y, { align: "right" });
     doc.setTextColor(0, 0, 0);
 
-    y += 5; // Decreased spacing from 8 to 5
+    y += 5;
     doc.text("", 20, y);
     doc.text("TDS", 70, y);
     doc.text("0", 150, y, { align: "right" });
 
-    y += 5; // Decreased spacing from 8 to 5
+    y += 5;
     doc.setFont("helvetica", "bold");
     doc.text("", 20, y);
-    doc.text("TOTAL AMOUNT AFTER GST", 70, y); // Renamed for clarity
+    doc.text("TOTAL AMOUNT AFTER GST", 70, y);
     doc.setTextColor(76, 175, 80);
     doc.text(`${totalAmount.toFixed(2)}`, 150, y, { align: "right" });
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(76, 175, 80);
     doc.line(20, y + 2, 190, y + 2);
 
-    y += 10; // Reduced from 12 to 10
+    y += 10;
     doc.setFontSize(10);
     doc.setTextColor(33, 150, 243);
     doc.text(`${numberToWords(Math.round(totalAmount))}`, 20, y);
     doc.setTextColor(0, 0, 0);
 
-    // Relationship Manager with Decreased Spacing
-    y += 20; // Reduced from 30 to 20
+    y += 20;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.setTextColor(33, 150, 243);
@@ -383,34 +373,33 @@ export default function Home() {
     doc.setDrawColor(33, 150, 243);
     doc.line(20, y + 2, 190, y + 2);
 
-    y += 10; // Reduced from 15 to 10
+    y += 10;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
     doc.text("Anil", 20, y);
-    y += 6; // Decreased spacing from 10 to 6
+    y += 6;
     doc.text("rds.digiads.com", 20, y);
-    y += 6; // Decreased spacing from 10 to 6
+    y += 6;
     doc.text(
       "For all TDS deductions, form 16A shall be sent at rds.digiads.com",
       20,
       y
     );
-    y += 6; // Decreased spacing from 10 to 6
+    y += 6;
     doc.text(
       "Payment received against this invoice confirms your acceptance to the Terms of Use",
       20,
       y
     );
-    y += 6; // Decreased spacing from 10 to 6
+    y += 6;
     doc.text(
       "available at rds.digiads.com/Terms-of-Use/Listing Services",
       20,
       y
     );
 
-    // Terms and Conditions with Decreased Spacing
-    y += 20; // Reduced from 30 to 20
+    y += 20;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.setTextColor(33, 150, 243);
@@ -418,7 +407,7 @@ export default function Home() {
     doc.setDrawColor(33, 150, 243);
     doc.line(20, y + 2, 190, y + 2);
 
-    y += 10; // Reduced from 15 to 10
+    y += 10;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.setTextColor(0, 0, 0);
@@ -428,9 +417,8 @@ export default function Home() {
       y
     );
 
-    // Footer with Decreased Spacing
-    y += 20; // Reduced from 30 to 20
-    doc.setFillColor(240, 240, 240); // Lighter gray background
+    y += 20;
+    doc.setFillColor(240, 240, 240);
     doc.rect(20, y, 170, 10, "F");
     doc.setDrawColor(33, 150, 243);
     doc.line(20, y, 190, y);
@@ -500,12 +488,19 @@ export default function Home() {
           }
           value={invoice.invoiceNumber}
         />
-
         <div>
           <label htmlFor="dateIssued">Date Issued: </label>
-         
+          <DatePicker
+            selected={invoice.dateIssued}
+            onChange={(date) => setInvoice({ ...invoice, dateIssued: date })}
+            dateFormat="dd-MM-yyyy"
+            placeholderText="Select date"
+            isClearable
+            showYearDropdown
+            scrollableYearDropdown
+            maxDate={new Date()}
+          />
         </div>
-
         <h3>Invoice Items:</h3>
         {invoice.items.map((item, index) => (
           <div key={index}>
@@ -538,7 +533,6 @@ export default function Home() {
         <button type="submit">Create Invoice</button>
       </form>
       <h1>Invoice Management</h1>
-
       {invoices.length === 0 ? (
         <p>No invoices available.</p>
       ) : (
@@ -566,7 +560,6 @@ export default function Home() {
             <p>
               <strong>Date Issued:</strong> {invoice.dateIssued}
             </p>
-
             <h3>Items:</h3>
             {invoice.items?.length > 0 ? (
               invoice.items.map((item, index) => (
@@ -579,7 +572,6 @@ export default function Home() {
             ) : (
               <p>No items in this invoice.</p>
             )}
-
             <button
               className="delete-btn"
               onClick={() => handleDelete(invoice._id)}
@@ -595,6 +587,7 @@ export default function Home() {
           </div>
         ))
       )}
+      Lootcamp
     </div>
   );
 }
