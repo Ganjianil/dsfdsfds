@@ -11,7 +11,8 @@ dotenv.config();
 const port = process.env.PORT || 8096;
 
 // Middleware
-app.use(cors());
+
+app.use(cors({ origin: "*" }));
 app.use(bodyParser.json());
 
 // ✅ MongoDB Connection (Optimized)
