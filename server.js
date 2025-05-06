@@ -1,31 +1,36 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
-const mongoose = require("mongoose"); // ✅ Keep this ONE time
+const mongoose = require("mongoose");
 const cors = require("cors");
-const bodyparser = require("body-parser");
+const bodyParser = require("body-parser");
 const router = require("./Routers/Router");
 
+// Load environment variables
 dotenv.config();
 const port = process.env.PORT || 8096;
 
+// Middleware
 app.use(cors());
-app.use(bodyparser.json());
+app.use(bodyParser.json());
 
-// ✅ Your MongoDB connection (no duplicate mongoose declaration)
-mongoose.connect(process.env.mongo_url);
+// ✅ MongoDB Connection (Optimized)
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch(err => console.error("MongoDB connection error:", err));
 
 mongoose.connection.on("disconnected", () => {
-  console.log("MongoDB disconnected! Reconnecting...");
-  mongoose.connect(process.env.MONGODB_URI);
+  console.log("MongoDB disconnected!");
 });
 
-app.listen(port, "0.0.0.0", () => {
-    console.log(`port connected on ${port}`);
-  });
-
+// ✅ API Endpoints
 app.use("/home", (req, res) => {
-  res.json({ message: "welcome" });
+  res.json({ message: "Welcome!s" });
 });
 
 app.use("/api", router);
+
+// ✅ Start Server
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server running on port ${port}`);
+});
