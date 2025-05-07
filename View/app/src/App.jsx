@@ -28,7 +28,9 @@ export default function Home() {
 
   const fetchInvoices = async () => {
     try {
-      const response = await fetch("http://localhost:8086/api/invoices");
+      const response = await fetch(
+        "https://dsfdsfds-mh0r.onrender.com/api/invoices"
+      );
       if (!response.ok) throw new Error(`Error: ${response.status}`);
       const data = await response.json();
       setInvoices(data);
@@ -39,7 +41,9 @@ export default function Home() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://localhost:8086/api/products");
+      const response = await fetch(
+        "https://dsfdsfds-mh0r.onrender.com/api/products"
+      );
       if (!response.ok) throw new Error(`Error: ${response.status}`);
       const data = await response.json();
       setProducts(data);
@@ -50,7 +54,7 @@ export default function Home() {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:8086/api/invoices/${id}`, {
+      await fetch(`https://dsfdsfds-mh0r.onrender.com/api/invoices/${id}`, {
         method: "DELETE",
       });
       setInvoices((prevInvoices) =>
@@ -87,11 +91,14 @@ export default function Home() {
           ? format(invoice.dateIssued, "dd-MM-yyyy")
           : "null",
       };
-      const response = await fetch("http://localhost:8086/api/invoices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formattedInvoice),
-      });
+      const response = await fetch(
+        "https://dsfdsfds-mh0r.onrender.com/api/invoices",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formattedInvoice),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
